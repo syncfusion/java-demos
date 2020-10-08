@@ -44,7 +44,7 @@ Syncfusion has no liability for any damage or consequence that may arise by the 
 
 ## <a name="controls-catalog"></a>Controls Catalog ##
 **File Formats**
-* <a href="Word%20library">Word library<a>
+* <a href="docio">Word library<a>
 
 ## <a name="support-and-feedback"></a>Support and feedback ##
 
