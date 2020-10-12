@@ -12,12 +12,12 @@ public class GettingStarted {
 		//Create an instance of WordDocument Instance (Empty Word Document).
 		WordDocument document = new WordDocument();
 		//Add a new section into the Word document.
-	    IWSection section = document.addSection();
-        //Specifies the page margins. 
+		IWSection section = document.addSection();
+		//Specifies the page margins. 
 		section.getPageSetup().getMargins().setAll(50f);
 		//Add a new simple paragraph into the section.
 		IWParagraph firstParagraph = section.addParagraph();
-	    //Set the paragraph's horizontal alignment as justify.
+		//Set the paragraph's horizontal alignment as justify.
 		firstParagraph.getParagraphFormat().setHorizontalAlignment(HorizontalAlignment.Justify);
 		//Add a text range into the paragraph.
 		IWTextRange firstTextRange = firstParagraph.appendText("AdventureWorks Cycles,");
@@ -34,7 +34,7 @@ public class GettingStarted {
 		IWParagraph paragraph = section.addParagraph();
 		paragraph.getParagraphFormat().setHorizontalAlignment(HorizontalAlignment.Center);
 		//Set after spacing for paragraph.
-	    paragraph.getParagraphFormat().setAfterSpacing(6);
+		paragraph.getParagraphFormat().setAfterSpacing(6);
 		//Add a picture into the paragraph.
 		IWPicture picture = paragraph.appendPicture(new FileInputStream(getDataDir("Image.png")));
 		//Specify the size of the picture.
@@ -101,7 +101,7 @@ public class GettingStarted {
 		//Specify the list format to continue from the last list.
 		paragraph.getListFormat().continueListNumbering();
 		//Increment the list level.
-	    paragraph.getListFormat().increaseIndentLevel();
+		paragraph.getListFormat().increaseIndentLevel();
 		paragraph=section.addParagraph();
 		paragraph.appendText("Level 0");
 		//Specify the list format to continue from the last list.
@@ -123,8 +123,8 @@ public class GettingStarted {
 	 */
 	public static String getDataDir(String path) {
         File dir = new File(System.getProperty("user.dir"));
-		if(!(dir.toString().endsWith("samples")))
-			dir = dir.getParentFile();
+	if(!(dir.toString().endsWith("samples")))
+		dir = dir.getParentFile();
         dir = new File(dir, "resources");
         dir = new File(dir, path);
         if (dir.isDirectory() == false)

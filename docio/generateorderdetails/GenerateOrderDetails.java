@@ -61,12 +61,10 @@ public class GenerateOrderDetails {
 			if (reader.getNodeType().getEnumValue() == XmlNodeType.Element.getEnumValue()) {
 				switch ((reader.getLocalName()) == null ? "string_null_value" : (reader.getLocalName())) {
 				case "Customers":
-
 					customers.add(getCustomer(reader));
 					break;
 				}
 			} else
-
 			{
 				reader.read();
 				if ((reader.getLocalName() == "CustomerDetails")
@@ -106,40 +104,31 @@ public class GenerateOrderDetails {
 			if (reader.getNodeType().getEnumValue() == XmlNodeType.Element.getEnumValue()) {
 				switch ((reader.getLocalName()) == null ? "string_null_value" : (reader.getLocalName())) {
 				case "CustomerName":
-
 					customer.setCustomerName(reader.readContentAsString());
 					break;
 				case "Address":
-
 					customer.setAddress(reader.readContentAsString());
 					break;
 				case "City":
-
 					customer.setCity(reader.readContentAsString());
 					break;
 				case "PostalCode":
-
 					customer.setPostalCode(reader.readContentAsString());
 					break;
 				case "Country":
-
 					customer.setCountry(reader.readContentAsString());
 					break;
 				case "Phone":
-
 					customer.setPhone(reader.readContentAsString());
 					break;
 				case "Orders":
-
 					customer.getOrders().add(getOrder(reader));
 					break;
 				default:
-
 					reader.skip();
 					break;
 				}
 			} else
-
 			{
 				reader.read();
 				if ((reader.getLocalName() == "Customers")
@@ -174,33 +163,26 @@ public class GenerateOrderDetails {
 			if (reader.getNodeType().getEnumValue() == XmlNodeType.Element.getEnumValue()) {
 				switch ((reader.getLocalName()) == null ? "string_null_value" : (reader.getLocalName())) {
 				case "CustomerName":
-
 					order.setCustomerName(reader.readContentAsString());
 					break;
 				case "OrderID":
-
 					order.setOrderID(reader.readContentAsString());
 					break;
 				case "OrderDate":
-
 					order.setOrderDate(reader.readContentAsString());
 					break;
 				case "ExpectedDeliveryDate":
-
 					order.setExpectedDeliveryDate(reader.readContentAsString());
 					break;
 				case "ShippedDate":
-
 					order.setShippedDate(reader.readContentAsString());
 					break;
 				case "Products":
-
 					order.getProducts().add(getProduct(reader));
 					break;
 				}
 				reader.read();
 			} else
-
 			{
 				reader.read();
 				if ((reader.getLocalName() == "Orders")
@@ -235,25 +217,20 @@ public class GenerateOrderDetails {
 			if (reader.getNodeType().getEnumValue() != XmlNodeType.EndElement.getEnumValue()) {
 				switch ((reader.getLocalName()) == null ? "string_null_value" : (reader.getLocalName())) {
 				case "OrderID":
-
 					product.setOrderID(reader.readContentAsString());
 					break;
 				case "Product":
-
 					product.setProduct(reader.readContentAsString());
 					break;
 				case "UnitPrice":
-
 					product.setUnitPrice(reader.readContentAsString());
 					break;
 				case "Quantity":
-
 					product.setQuantity(reader.readContentAsString());
 					break;
 				}
 				reader.read();
 			} else
-
 			{
 				reader.read();
 				if ((reader.getLocalName() == "Products")
