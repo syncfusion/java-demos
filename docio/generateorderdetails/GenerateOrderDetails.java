@@ -20,18 +20,20 @@ import java.io.File;
 public class GenerateOrderDetails {
 
 	public static void main(String[] args) throws Exception {
-		// Creates a new document
+		//Creates new Word document instance for Word processing.
 		WordDocument document = new WordDocument();
-		// Loads template
+		//Opens the template Word document.
 		String basePath = getDataDir("Template.docx");
 		document.open(basePath, FormatType.Docx);
-		// Retrieves the mail merge data
+		//Retrieves the mail merge data.
 		MailMergeDataTable dataTable = getMailMergeDataTable();
-		// Executes nested Mail merge using implicit relational data
+		//Executes nested Mail merge using implicit relational data.
 		document.getMailMerge().executeNestedGroup(dataTable);
-		// Removes empty page at the end of Word document
+		//Removes empty page at the end of Word document.
 		removeEmptyPage(document);
+		//Save the document in the given name and format.
 		document.save("Sample.docx", FormatType.Docx);
+		//Release the resources occupied by the WordDocument instance.
 		System.out.println("Word document generated successfully.");
 	}
 
