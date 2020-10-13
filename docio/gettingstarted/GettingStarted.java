@@ -3,12 +3,12 @@ package gettingstarted;
 import com.syncfusion.docio.FormatType;
 import java.io.FileInputStream;
 import java.io.File;
-
 import com.syncfusion.docio.*;
 
 public class GettingStarted {
 
-	public static void main(String[] args) throws Exception {
+	public static void main(String[] args) throws Exception 
+	{
 		//Create an instance of WordDocument Instance (Empty Word Document).
 		WordDocument document = new WordDocument();
 		//Add a new section into the Word document.
@@ -121,14 +121,15 @@ public class GettingStarted {
 	 * 
 	 * @param path specifies the file path
 	 */
-	public static String getDataDir(String path) {
+	public static String getDataDir(String path) 
+	{
         File dir = new File(System.getProperty("user.dir"));
-	if(!(dir.toString().endsWith("samples")))
-		dir = dir.getParentFile();
+		if(!(dir.toString().endsWith("samples")))
+			dir = dir.getParentFile();
         dir = new File(dir, "resources");
         dir = new File(dir, path);
         if (dir.isDirectory() == false)
-            dir.mkdir();
+			dir.mkdir();
         return dir.toString();
     }
 }

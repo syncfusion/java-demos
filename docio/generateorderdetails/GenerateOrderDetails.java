@@ -2,7 +2,6 @@ package generateorderdetails;
 
 import java.io.FileInputStream;
 import com.syncfusion.docio.*;
-import com.syncfusion.javahelper.system.ObjectSupport;
 import com.syncfusion.javahelper.system.RefSupport;
 import com.syncfusion.javahelper.system.StringSupport;
 import com.syncfusion.javahelper.system.collections.DictionaryEntrySupport;
@@ -17,9 +16,11 @@ import com.syncfusion.javahelper.system.xml.XmlNodeType;
 import com.syncfusion.javahelper.system.xml.XmlReaderSupport;
 import java.io.File;
 
-public class GenerateOrderDetails {
+public class GenerateOrderDetails 
+{
 
-	public static void main(String[] args) throws Exception {
+	public static void main(String[] args) throws Exception 
+	{
 		//Creates new Word document instance for Word processing.
 		WordDocument document = new WordDocument();
 		//Opens the template Word document.
@@ -34,6 +35,7 @@ public class GenerateOrderDetails {
 		//Save the document in the given name and format.
 		document.save("Sample.docx", FormatType.Docx);
 		//Release the resources occupied by the WordDocument instance.
+		document.close();
 		System.out.println("Word document generated successfully.");
 	}
 
@@ -42,40 +44,47 @@ public class GenerateOrderDetails {
 	 * Gets the mail merge data table.
 	 * 
 	 * @return
-	 * @exception System.Exception reader
-	 * @exception XmlException     Unexpected xml tag + reader.LocalName
 	 */
-	private static MailMergeDataTable getMailMergeDataTable() throws Exception {
-		// Gets the employee details implicit as "IEnumerable" collection.
+	private static MailMergeDataTable getMailMergeDataTable() throws Exception 
+	{
+		//Gets the customer details implicit as "IEnumerable" collection.
 		ListSupport<CustomerDetails> customers = new ListSupport<CustomerDetails>(CustomerDetails.class);
+
 		FileStreamSupport stream = new FileStreamSupport(getDataDir("CustomerDetails.xml"), FileMode.OpenOrCreate);
+
 		XmlReaderSupport reader = XmlReaderSupport.create(stream);
-		if (reader == null)
-			throw new Exception("reader");
+
 		while (reader.getNodeType().getEnumValue() != XmlNodeType.Element.getEnumValue())
 			reader.read();
-		if (!(reader.getLocalName() == "CustomerDetails"))
-			throw new Exception("Unexpected xml tag " + reader.getLocalName());
+
 		reader.read();
+
 		while (reader.getNodeType().getEnumValue() == XmlNodeType.Whitespace.getEnumValue())
 			reader.read();
-		while (!(reader.getLocalName() == "CustomerDetails")) {
-			if (reader.getNodeType().getEnumValue() == XmlNodeType.Element.getEnumValue()) {
-				switch ((reader.getLocalName()) == null ? "string_null_value" : (reader.getLocalName())) {
-				case "Customers":
-					customers.add(getCustomer(reader));
-					break;
+
+		while (!(reader.getLocalName() == "CustomerDetails")) 
+		{
+			if (reader.getNodeType().getEnumValue() == XmlNodeType.Element.getEnumValue()) 
+			{
+				switch ((reader.getLocalName()) == null ? "string_null_value" : (reader.getLocalName())) 
+				{
+					case "Customers":
+						customers.add(getCustomer(reader));
+						break;
 				}
-			} else
+			} 
+			else
 			{
 				reader.read();
 				if ((reader.getLocalName() == "CustomerDetails")
-						&& reader.getNodeType().getEnumValue() == XmlNodeType.EndElement.getEnumValue())
+					&& reader.getNodeType().getEnumValue() == XmlNodeType.EndElement.getEnumValue())
 					break;
 			}
 		}
+
 		reader.close();
 		stream.close();
+
 		// Creates an instance of "MailMergeDataTable" by specifying mail merge group
 		// name and "IEnumerable" collection.
 		MailMergeDataTable dataTable = new MailMergeDataTable("Customers", customers);
@@ -88,53 +97,56 @@ public class GenerateOrderDetails {
 	 * 
 	 * @param reader The reader.
 	 * @return
-	 * @exception System.Exception reader
-	 * @exception XmlException     Unexpected xml tag + reader.LocalName
 	 */
-	private static CustomerDetails getCustomer(XmlReaderSupport reader) throws Exception {
-		if (reader == null)
-			throw new Exception("reader");
+	private static CustomerDetails getCustomer(XmlReaderSupport reader) throws Exception 
+	{
 		while (reader.getNodeType().getEnumValue() != XmlNodeType.Element.getEnumValue())
 			reader.read();
-		if (!(reader.getLocalName() == "Customers"))
-			throw new Exception("Unexpected xml tag " + reader.getLocalName());
+
 		reader.read();
+
 		while (reader.getNodeType().getEnumValue() == XmlNodeType.Whitespace.getEnumValue())
 			reader.read();
+
 		CustomerDetails customer = new CustomerDetails();
-		while (!(reader.getLocalName() == "Customers")) {
-			if (reader.getNodeType().getEnumValue() == XmlNodeType.Element.getEnumValue()) {
-				switch ((reader.getLocalName()) == null ? "string_null_value" : (reader.getLocalName())) {
-				case "CustomerName":
-					customer.setCustomerName(reader.readContentAsString());
-					break;
-				case "Address":
-					customer.setAddress(reader.readContentAsString());
-					break;
-				case "City":
-					customer.setCity(reader.readContentAsString());
-					break;
-				case "PostalCode":
-					customer.setPostalCode(reader.readContentAsString());
-					break;
-				case "Country":
-					customer.setCountry(reader.readContentAsString());
-					break;
-				case "Phone":
-					customer.setPhone(reader.readContentAsString());
-					break;
-				case "Orders":
-					customer.getOrders().add(getOrder(reader));
-					break;
-				default:
-					reader.skip();
-					break;
+
+		while (!(reader.getLocalName() == "Customers")) 
+		{
+			if (reader.getNodeType().getEnumValue() == XmlNodeType.Element.getEnumValue()) 
+			{
+				switch ((reader.getLocalName()) == null ? "string_null_value" : (reader.getLocalName())) 
+				{
+					case "CustomerName":
+						customer.setCustomerName(reader.readContentAsString());
+						break;
+					case "Address":
+						customer.setAddress(reader.readContentAsString());
+						break;
+					case "City":
+						customer.setCity(reader.readContentAsString());
+						break;
+					case "PostalCode":
+						customer.setPostalCode(reader.readContentAsString());
+						break;
+					case "Country":
+						customer.setCountry(reader.readContentAsString());
+						break;
+					case "Phone":
+						customer.setPhone(reader.readContentAsString());
+						break;
+					case "Orders":
+						customer.getOrders().add(getOrder(reader));
+						break;
+					default:
+						reader.skip();
+						break;
 				}
-			} else
+			} 
+			else
 			{
 				reader.read();
 				if ((reader.getLocalName() == "Customers")
-						&& reader.getNodeType().getEnumValue() == XmlNodeType.EndElement.getEnumValue())
+					&& reader.getNodeType().getEnumValue() == XmlNodeType.EndElement.getEnumValue())
 					break;
 			}
 		}
@@ -147,48 +159,51 @@ public class GenerateOrderDetails {
 	 * 
 	 * @param reader The reader.
 	 * @return
-	 * @exception System.Exception reader
-	 * @exception XmlException     Unexpected xml tag + reader.LocalName
 	 */
-	private static OrderDetails getOrder(XmlReaderSupport reader) throws Exception {
-		if (reader == null)
-			throw new Exception("reader");
+	private static OrderDetails getOrder(XmlReaderSupport reader) throws Exception 
+	{
 		while (reader.getNodeType().getEnumValue() != XmlNodeType.Element.getEnumValue())
 			reader.read();
-		if (!(reader.getLocalName() == "Orders"))
-			throw new Exception("Unexpected xml tag " + reader.getLocalName());
+
 		reader.read();
+
 		while (reader.getNodeType().getEnumValue() == XmlNodeType.Whitespace.getEnumValue())
 			reader.read();
+
 		OrderDetails order = new OrderDetails();
-		while (!(reader.getLocalName() == "Orders")) {
-			if (reader.getNodeType().getEnumValue() == XmlNodeType.Element.getEnumValue()) {
-				switch ((reader.getLocalName()) == null ? "string_null_value" : (reader.getLocalName())) {
-				case "CustomerName":
-					order.setCustomerName(reader.readContentAsString());
-					break;
-				case "OrderID":
-					order.setOrderID(reader.readContentAsString());
-					break;
-				case "OrderDate":
-					order.setOrderDate(reader.readContentAsString());
-					break;
-				case "ExpectedDeliveryDate":
-					order.setExpectedDeliveryDate(reader.readContentAsString());
-					break;
-				case "ShippedDate":
-					order.setShippedDate(reader.readContentAsString());
-					break;
-				case "Products":
-					order.getProducts().add(getProduct(reader));
-					break;
+
+		while (!(reader.getLocalName() == "Orders")) 
+		{
+			if (reader.getNodeType().getEnumValue() == XmlNodeType.Element.getEnumValue()) 
+			{
+				switch ((reader.getLocalName()) == null ? "string_null_value" : (reader.getLocalName())) 
+				{
+				    case "CustomerName":
+						order.setCustomerName(reader.readContentAsString());
+						break;
+					case "OrderID":
+						order.setOrderID(reader.readContentAsString());
+						break;
+					case "OrderDate":
+						order.setOrderDate(reader.readContentAsString());
+						break;
+					case "ExpectedDeliveryDate":
+						order.setExpectedDeliveryDate(reader.readContentAsString());
+						break;
+					case "ShippedDate":
+						order.setShippedDate(reader.readContentAsString());
+						break;
+					case "Products":
+						order.getProducts().add(getProduct(reader));
+						break;
 				}
 				reader.read();
-			} else
+			} 
+			else
 			{
 				reader.read();
 				if ((reader.getLocalName() == "Orders")
-						&& reader.getNodeType().getEnumValue() == XmlNodeType.EndElement.getEnumValue())
+					&& reader.getNodeType().getEnumValue() == XmlNodeType.EndElement.getEnumValue())
 					break;
 			}
 		}
@@ -201,42 +216,45 @@ public class GenerateOrderDetails {
 	 * 
 	 * @param reader The reader.
 	 * @return
-	 * @exception System.Exception reader
-	 * @exception XmlException     Unexpected xml tag + reader.LocalName
 	 */
-	private static ProductDetails getProduct(XmlReaderSupport reader) throws Exception {
-		if (reader == null)
-			throw new Exception("reader");
+	private static ProductDetails getProduct(XmlReaderSupport reader) throws Exception 
+	{
 		while (reader.getNodeType().getEnumValue() != XmlNodeType.Element.getEnumValue())
 			reader.read();
-		if (!(reader.getLocalName() == "Products"))
-			throw new Exception("Unexpected xml tag " + reader.getLocalName());
+
 		reader.read();
+
 		while (reader.getNodeType().getEnumValue() == XmlNodeType.Whitespace.getEnumValue())
 			reader.read();
+
 		ProductDetails product = new ProductDetails();
-		while (!(reader.getLocalName() == "Products")) {
-			if (reader.getNodeType().getEnumValue() != XmlNodeType.EndElement.getEnumValue()) {
-				switch ((reader.getLocalName()) == null ? "string_null_value" : (reader.getLocalName())) {
-				case "OrderID":
-					product.setOrderID(reader.readContentAsString());
-					break;
-				case "Product":
-					product.setProduct(reader.readContentAsString());
-					break;
-				case "UnitPrice":
-					product.setUnitPrice(reader.readContentAsString());
-					break;
-				case "Quantity":
-					product.setQuantity(reader.readContentAsString());
-					break;
+
+		while (!(reader.getLocalName() == "Products")) 
+		{
+			if (reader.getNodeType().getEnumValue() != XmlNodeType.EndElement.getEnumValue()) 
+			{
+				switch ((reader.getLocalName()) == null ? "string_null_value" : (reader.getLocalName())) 
+				{
+					case "OrderID":
+						product.setOrderID(reader.readContentAsString());
+						break;
+					case "Product":
+						product.setProduct(reader.readContentAsString());
+						break;
+					case "UnitPrice":
+						product.setUnitPrice(reader.readContentAsString());
+						break;
+					case "Quantity":
+						product.setQuantity(reader.readContentAsString());
+						break;
 				}
 				reader.read();
-			} else
+			} 
+			else
 			{
 				reader.read();
 				if ((reader.getLocalName() == "Products")
-						&& reader.getNodeType().getEnumValue() == XmlNodeType.EndElement.getEnumValue())
+					&& reader.getNodeType().getEnumValue() == XmlNodeType.EndElement.getEnumValue())
 					break;
 			}
 		}
@@ -249,27 +267,39 @@ public class GenerateOrderDetails {
 	 * 
 	 * @param document The Word document
 	 */
-	private static void removeEmptyPage(WordDocument document) throws Exception {
+	private static void removeEmptyPage(WordDocument document) throws Exception 
+	{
 		WTextBody textBody = document.getLastSection().getBody();
-		boolean IsRenderableItem = false;
-		for (int itemIndex = textBody.getChildEntities().getCount() - 1; itemIndex >= 0
-				&& !IsRenderableItem; itemIndex--) {
-			if (textBody.getChildEntities().get(itemIndex) instanceof WParagraph) {
-				WParagraph paragraph = (WParagraph) ObjectSupport.instanceOf(textBody.getChildEntities().get(itemIndex),
-						WParagraph.class);
-				for (int pIndex = paragraph.getItems().getCount() - 1; pIndex >= 0; pIndex--) {
-					ParagraphItem paragraphItem = paragraph.getItems().get(pIndex);
-					if ((paragraphItem instanceof Break
-							&& ((Break) ObjectSupport.instanceOf(paragraphItem, Break.class)).getBreakType()
-									.getEnumValue() == BreakType.PageBreak.getEnumValue()))
-						paragraph.getItems().removeAt(pIndex);
-					else
 
-					if (!(paragraphItem instanceof BookmarkStart || paragraphItem instanceof BookmarkEnd)) {
+		//A flag to determine any renderable item found in the Word document.
+		boolean IsRenderableItem = false;
+		//Iterates text body items.
+		for (int itemIndex = textBody.getChildEntities().getCount() - 1; itemIndex >= 0 && !IsRenderableItem; itemIndex--) 
+		{
+		 	//Check item is empty paragraph and removes it.
+			if (textBody.getChildEntities().get(itemIndex) instanceof WParagraph)
+			{
+				WParagraph paragraph = (WParagraph) textBody.getChildEntities().get(itemIndex);
+				//Iterates into paragraph
+				for (int pIndex = paragraph.getItems().getCount() - 1; pIndex >= 0; pIndex--) 
+				{
+					ParagraphItem paragraphItem = paragraph.getItems().get(pIndex);
+
+					//If page break found in end of document, then remove it to preserve contents in same page
+					if ((paragraphItem instanceof Break 
+					&& ((Break) paragraphItem).getBreakType().getEnumValue() == BreakType.PageBreak.getEnumValue()))
+					{
+						paragraph.getItems().removeAt(pIndex);
+					}
+					//Check paragraph contains any renderable items.
+					else if (!(paragraphItem instanceof BookmarkStart || paragraphItem instanceof BookmarkEnd)) 
+					{
 						IsRenderableItem = true;
+						//Found renderable item and break the iteration.
 						break;
 					}
 				}
+				//Remove empty paragraph and the paragraph with bookmarks only
 				if (paragraph.getItems().getCount() == 0 || !IsRenderableItem)
 					textBody.getChildEntities().removeAt(itemIndex);
 			}
@@ -281,7 +311,8 @@ public class GenerateOrderDetails {
 	 * 
 	 * @param path specifies the file path
 	 */
-	public static String getDataDir(String path) {
+	public static String getDataDir(String path) 
+	{
 		File dir = new File(System.getProperty("user.dir"));
 		if (!(dir.toString().endsWith("samples")))
 			dir = dir.getParentFile();
