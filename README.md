@@ -1,4 +1,4 @@
-# Syncfusion Java Samples 
+# Syncfusion Java Samples
 
 This repository contains demos of Syncfusion Java controls. This is the best place to check our controls to get more insight about the usage of APIs. 
 
