@@ -1,14 +1,13 @@
 package mailmergeevent;
 
 import java.io.*;
-import mailmergeevent.ProductDetail;
-import mailmergeevent.Product_PriceList;
+import java.util.List;
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.Unmarshaller;
 import com.syncfusion.docio.*;
-import com.syncfusion.javahelper.system.*;
 import com.syncfusion.javahelper.system.collections.generic.ListSupport;
 import com.syncfusion.javahelper.system.drawing.ColorSupport;
 import com.syncfusion.javahelper.system.io.*;
-import com.syncfusion.javahelper.system.xml.*;
 
 public class MailMergeEvent {
 	public static void main(String[] args) throws Exception {
@@ -68,7 +67,6 @@ public class MailMergeEvent {
 		// Execute Mail Merge with groups.
 		mailMerge.executeGroup(mailMergeDataTablePriceList);
 		mailMerge.executeGroup(mailMergeDataTableProductData);
-		FormatType type = FormatType.Docx;
 		// Save and close the document.
 		document.save("Mail Merge Event.docx", FormatType.Docx);
 		document.close();
@@ -113,87 +111,20 @@ public class MailMergeEvent {
 	 * 
 	 */
 	private static MailMergeDataTable getMailMergeDataTablePriceList() throws Exception {
-		// Gets the product_pricelist as “IEnumerable” collection.
-		ListSupport<Product_PriceList> product_PriceList = new ListSupport<Product_PriceList>(Product_PriceList.class);
-		FileStreamSupport fs = new FileStreamSupport(getDataDir("ProductPriceList.xml"), FileMode.Open,
-				FileAccess.Read);
-		XmlReaderSupport reader = XmlReaderSupport.create(fs);
-		if (reader == null)
-			throw new Exception("reader");
-		while (reader.getNodeType().getEnumValue() != XmlNodeType.Element.getEnumValue())
-			reader.read();
-		if (!(reader.getLocalName() == "Products"))
-			throw new Exception("Unexpected xml tag " + reader.getLocalName());
-		reader.read();
-		while (reader.getNodeType().getEnumValue() == XmlNodeType.Whitespace.getEnumValue())
-			reader.read();
-		while (!(reader.getLocalName() == "Products")) {
-			if (reader.getNodeType().getEnumValue() == XmlNodeType.Element.getEnumValue()) {
-				switch ((reader.getLocalName()) == null ? "string_null_value" : (reader.getLocalName())) {
-				case "Product_PriceList":
-
-					product_PriceList.add(getProduct_PriceList(reader));
-					break;
-				}
-			} else
-
-			{
-				reader.read();
-				if (((reader.getLocalName() == "Products"))
-						&& reader.getNodeType().getEnumValue() == XmlNodeType.EndElement.getEnumValue())
-					break;
-			}
-		}
-		// Creates an instance of “MailMergeDataTable” by specifying mail merge group name and “IEnumerable” collection.
-		MailMergeDataTable dataTable1 = new MailMergeDataTable("Product_PriceList", product_PriceList);
-		reader.close();
-		fs.close();
-		return dataTable1;
-	}
-
-	/**
-	 * 
-	 * Gets the product price list.
-	 * 
-	 * @param reader The reader.
-	 */
-	private static Product_PriceList getProduct_PriceList(XmlReaderSupport reader) throws Exception {
-		if (reader == null)
-			throw new Exception("reader");
-		while (reader.getNodeType().getEnumValue() != XmlNodeType.Element.getEnumValue())
-			reader.read();
-		if (!(reader.getLocalName() == "Product_PriceList"))
-			throw new Exception("Unexpected xml tag " + reader.getLocalName());
-		reader.read();
-		while (reader.getNodeType().getEnumValue() == XmlNodeType.Whitespace.getEnumValue())
-			reader.read();
-		Product_PriceList product_PriceList = new Product_PriceList();
-		while (!(reader.getLocalName() == "Product_PriceList")) {
-			if (reader.getNodeType().getEnumValue() == XmlNodeType.Element.getEnumValue()) {
-				switch ((reader.getLocalName()) == null ? "string_null_value" : (reader.getLocalName())) {
-				case "ProductName":
-
-					product_PriceList.setProductName(reader.readContentAsString());
-					break;
-				case "Price":
-
-					product_PriceList.setPrice(reader.readContentAsString());
-					break;
-				default:
-
-					reader.skip();
-					break;
-				}
-			} else
-
-			{
-				reader.read();
-				if (((reader.getLocalName() == "Product_PriceList"))
-						&& reader.getNodeType().getEnumValue() == XmlNodeType.EndElement.getEnumValue())
-					break;
-			}
-		}
-		return product_PriceList;
+		// Loads the XML file.
+		File file = new File(getDataDir("ProductPriceList.xml"));
+		// Create a new instance for the JAXBContext.
+		JAXBContext jaxbContext = JAXBContext.newInstance(ProductDetail.class);
+		// Reads the XML file.
+		Unmarshaller jaxbUnmarshaller = jaxbContext.createUnmarshaller();
+		ProductDetail products = (ProductDetail) jaxbUnmarshaller.unmarshal(file);
+		// Gets the list of product price details.
+		List<Product_PriceList> list = products.getPriceList();
+		ListSupport<Product_PriceList> priceList = new ListSupport<Product_PriceList>(Product_PriceList.class);
+		priceList.addRange(list);
+		// Creates an instance of MailMergeDataTable by specifying mail merge group name and IEnumerable collection.
+		MailMergeDataTable dataTable = new MailMergeDataTable("Product_PriceList", priceList);
+		return dataTable;
 	}
 
 	/**
@@ -202,91 +133,22 @@ public class MailMergeEvent {
 	 * 
 	 */
 	private static MailMergeDataTable getMailMergeDataTableProductData() throws Exception {
-		// Gets the product detail as “IEnumerable” collection.
-		ListSupport<ProductDetail> productDetail = new ListSupport<ProductDetail>(ProductDetail.class);
-		FileStreamSupport fs = new FileStreamSupport(getDataDir("Product.xml"), FileMode.Open, FileAccess.Read);
-		XmlReaderSupport reader = XmlReaderSupport.create(fs);
-		if (reader == null)
-			throw new Exception("reader");
-		while (reader.getNodeType().getEnumValue() != XmlNodeType.Element.getEnumValue())
-			reader.read();
-		if (!(reader.getLocalName() == "ProductList"))
-			throw new Exception("Unexpected xml tag " + reader.getLocalName());
-		reader.read();
-		while (reader.getNodeType().getEnumValue() == XmlNodeType.Whitespace.getEnumValue())
-			reader.read();
-		while (!(reader.getLocalName() == "ProductList")) {
-			if (reader.getNodeType().getEnumValue() == XmlNodeType.Element.getEnumValue()) {
-				switch ((reader.getLocalName()) == null ? "string_null_value" : (reader.getLocalName())) {
-				case "Products":
-
-					productDetail.add(getProductDetail(reader));
-					break;
-				}
-			} else
-
-			{
-				reader.read();
-				if (((reader.getLocalName() == "ProductList"))
-						&& reader.getNodeType().getEnumValue() == XmlNodeType.EndElement.getEnumValue())
-					break;
-			}
-		}
-		// Creates an instance of “MailMergeDataTable” by specifying mail merge group name and “IEnumerable” collection.
-		MailMergeDataTable dataTable2 = new MailMergeDataTable("ProductDetail", productDetail);
-		reader.close();
-		fs.close();
-		return dataTable2;
+		// Loads the XML file.
+		File file = new File(getDataDir("Product.xml"));
+		// Create a new instance for the JAXBContext.
+		JAXBContext jaxbContext = JAXBContext.newInstance(ProductList.class);
+		// Reads the XML file.
+		Unmarshaller jaxbUnmarshaller = jaxbContext.createUnmarshaller();
+		ProductList products = (ProductList) jaxbUnmarshaller.unmarshal(file);
+		// Gets the list of product details.
+		List<Products> list = products.getProducts();
+		ListSupport<Products> productList = new ListSupport<Products>(Products.class);
+		productList.addRange(list);
+		// Creates an instance of MailMergeDataTable by specifying mail merge group name and IEnumerable collection.
+		MailMergeDataTable dataTable = new MailMergeDataTable("ProductDetail", productList);
+		return dataTable;
 	}
 
-	/**
-	 * 
-	 * Gets the product details.
-	 * 
-	 * @param reader The reader.
-	 */
-	private static ProductDetail getProductDetail(XmlReaderSupport reader) throws Exception {
-		if (reader == null)
-			throw new Exception("reader");
-		while (reader.getNodeType().getEnumValue() != XmlNodeType.Element.getEnumValue())
-			reader.read();
-		if (!(reader.getLocalName() == "Products"))
-			throw new Exception("Unexpected xml tag " + reader.getLocalName());
-		reader.read();
-		while (reader.getNodeType().getEnumValue() == XmlNodeType.Whitespace.getEnumValue())
-			reader.read();
-		ProductDetail productDetail = new ProductDetail();
-		while (!(reader.getLocalName() == "Products")) {
-			if (reader.getNodeType().getEnumValue() == XmlNodeType.Element.getEnumValue()) {
-				switch ((reader.getLocalName()) == null ? "string_null_value" : (reader.getLocalName())) {
-				case "SNO":
-
-					productDetail.setSNO(reader.readContentAsString());
-					break;
-				case "ProductName":
-
-					productDetail.setProductName(reader.readContentAsString());
-					break;
-				case "ProductImage":
-
-					productDetail.setProductImage(reader.readContentAsString());
-					break;
-				default:
-
-					reader.skip();
-					break;
-				}
-			} else
-
-			{
-				reader.read();
-				if ((reader.getLocalName() == "Products")
-						&& reader.getNodeType().getEnumValue() == XmlNodeType.EndElement.getEnumValue())
-					break;
-			}
-		}
-		return productDetail;
-	}
 	/**
 	 * Get the file path
 	 * 

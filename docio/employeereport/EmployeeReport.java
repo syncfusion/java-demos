@@ -1,11 +1,11 @@
 package employeereport;
 
+import java.util.List;
 import java.io.*;
+import javax.xml.bind.*;
 import com.syncfusion.docio.*;
-import com.syncfusion.javahelper.system.*;
+import com.syncfusion.javahelper.system.ConvertSupport;
 import com.syncfusion.javahelper.system.collections.generic.ListSupport;
-import com.syncfusion.javahelper.system.io.*;
-import com.syncfusion.javahelper.system.xml.*;
 
 public class EmployeeReport {
 	public static void main(String[] args) throws Exception {
@@ -67,146 +67,22 @@ public class EmployeeReport {
 	 * 
 	 */
 	private static MailMergeDataTable getMailMergeDataTableEmployee() throws Exception {
-		ListSupport<Employees> employees = new ListSupport<Employees>(Employees.class);
-		FileStreamSupport fs = new FileStreamSupport(getDataDir("EmployeesList.xml"), FileMode.Open,
-				FileAccess.Read);
-		XmlReaderSupport reader = XmlReaderSupport.create(fs);
-		if (reader == null)
-			throw new Exception("reader");
-		while (reader.getNodeType().getEnumValue() != XmlNodeType.Element.getEnumValue())
-			reader.read();
-		if (!(reader.getLocalName() == "Employees"))
-			throw new Exception("Unexpected xml tag " + reader.getLocalName());
-		reader.read();
-		while (reader.getNodeType().getEnumValue() == XmlNodeType.Whitespace.getEnumValue())
-			reader.read();
-		while (!(reader.getLocalName() == "Employees")) {
-			if (reader.getNodeType().getEnumValue() == XmlNodeType.Element.getEnumValue()) {
-				switch ((reader.getLocalName()) == null ? "string_null_value" : (reader.getLocalName())) {
-				case "Employee":
-
-					employees.add(getEmployees(reader));
-					break;
-				}
-			} else
-
-			{
-				reader.read();
-				if ((reader.getLocalName() == "Employees")
-						&& reader.getNodeType().getEnumValue() == XmlNodeType.EndElement.getEnumValue())
-					break;
-			}
-		}
-		MailMergeDataTable dataTable = new MailMergeDataTable("Employees", employees);
-		reader.close();
-		fs.close();
+		// Loads the XML file.
+		File file = new File(getDataDir("EmployeesList.xml"));
+		// Create a new instance for the JAXBContext.
+		JAXBContext jaxbContext = JAXBContext.newInstance(Employees.class);
+		// Reads the XML file.
+		Unmarshaller jaxbUnmarshaller = jaxbContext.createUnmarshaller();
+		Employees employees = (Employees) jaxbUnmarshaller.unmarshal(file);
+		// Gets the list of employee details.
+		List<Employee> employee = employees.getEmployees();
+		ListSupport<Employee> employeeList = new ListSupport<Employee>(Employee.class);
+		employeeList.addRange(employee);
+		// Creates an instance of MailMergeDataTable by specifying mail merge group name and IEnumerable collection.	
+		MailMergeDataTable dataTable = new MailMergeDataTable("Employees", employeeList);
 		return dataTable;
 	}
 
-	/**
-	 * 
-	 * Gets the employees.
-	 * 
-	 * @param reader The reader.
-	 */
-	private static Employees getEmployees(XmlReaderSupport reader) throws Exception {
-		if (reader == null)
-			throw new Exception("reader");
-		while (reader.getNodeType().getEnumValue() != XmlNodeType.Element.getEnumValue())
-			reader.read();
-		if (!(reader.getLocalName() == "Employee"))
-			throw new Exception("Unexpected xml tag " + reader.getLocalName());
-		reader.read();
-		while (reader.getNodeType().getEnumValue() == XmlNodeType.Whitespace.getEnumValue())
-			reader.read();
-		Employees employee = new Employees();
-		while (!(reader.getLocalName() == "Employee")) {
-			if (reader.getNodeType().getEnumValue() == XmlNodeType.Element.getEnumValue()) {
-				switch ((reader.getLocalName()) == null ? "string_null_value" : (reader.getLocalName())) {
-				case "EmployeeID":
-
-					employee.setEmployeeID(reader.readContentAsString());
-					break;
-				case "LastName":
-
-					employee.setLastName(reader.readContentAsString());
-					break;
-				case "FirstName":
-
-					employee.setFirstName(reader.readContentAsString());
-					break;
-				case "Title":
-
-					employee.setTitle(reader.readContentAsString());
-					break;
-				case "TitleOfCourtesy":
-
-					employee.setTitleOfCourtesy(reader.readContentAsString());
-					break;
-				case "BirthDate":
-
-					employee.setBirthDate(reader.readContentAsString());
-					break;
-				case "HireDate":
-
-					employee.setHireDate(reader.readContentAsString());
-					break;
-				case "Address":
-
-					employee.setAddress(reader.readContentAsString());
-					break;
-				case "City":
-
-					employee.setCity(reader.readContentAsString());
-					break;
-				case "Region":
-
-					employee.setRegion(reader.readContentAsString());
-					break;
-				case "PostalCode":
-
-					employee.setPostalCode(reader.readContentAsString());
-					break;
-				case "Country":
-
-					employee.setCountry(reader.readContentAsString());
-					break;
-				case "HomePhone":
-
-					employee.setHomePhone(reader.readContentAsString());
-					break;
-				case "Extension":
-
-					employee.setExtension(reader.readContentAsString());
-					break;
-				case "Photo":
-
-					employee.setPhoto(reader.readContentAsString());
-					break;
-				case "Notes":
-
-					employee.setNotes(reader.readContentAsString());
-					break;
-				case "ReportsTo":
-
-					employee.setReportsTo(reader.readContentAsString());
-					break;
-				default:
-
-					reader.skip();
-					break;
-				}
-			} else
-
-			{
-				reader.read();
-				if ((reader.getLocalName() == "Employee")
-						&& reader.getNodeType().getEnumValue() == XmlNodeType.EndElement.getEnumValue())
-					break;
-			}
-		}
-		return employee;
-	}
 	/**
 	 * Get the file path
 	 * 

@@ -1,43 +1,25 @@
 package mailmergeevent;
 
+import java.util.List;
+import javax.xml.bind.annotation.*;
+
+@XmlRootElement(name = "Products")
 public class ProductDetail {
-	private String m_sNO;
-	private String m_productName;
-	private String m_productImage;
+	private List<Product_PriceList> PriceList;
 
-	public String getSNO() throws Exception {
-		return m_sNO;
+	/**
+	 * Gets the list of product price.
+	 */
+	@XmlElement(name = "Product_PriceList")
+	public List<Product_PriceList> getPriceList() {
+		return PriceList;
 	}
 
-	public String setSNO(String value) throws Exception {
-		m_sNO = value;
-		return value;
+	/**
+	 * Sets the list of product price.
+	 */
+	public void setPriceList(List<Product_PriceList> priceList) {
+		this.PriceList = priceList;
 	}
 
-	public String getProductName() throws Exception {
-		return m_productName;
-	}
-
-	public String setProductName(String value) throws Exception {
-		m_productName = value;
-		return value;
-	}
-
-	public String getProductImage() throws Exception {
-		return m_productImage;
-	}
-
-	public String setProductImage(String value) throws Exception {
-		m_productImage = value;
-		return value;
-	}
-
-	public ProductDetail(String sNO, String productName, String productImage) throws Exception {
-		m_sNO = sNO;
-		m_productName = productName;
-		m_productImage = productImage;
-	}
-
-	public ProductDetail() throws Exception {
-	}
 }

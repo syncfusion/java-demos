@@ -1,12 +1,14 @@
 package tablestyles;
 
 import java.io.*;
+import java.util.List;
+
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.Unmarshaller;
+
 import com.syncfusion.docio.*;
-import com.syncfusion.javahelper.system.*;
 import com.syncfusion.javahelper.system.collections.generic.ListSupport;
 import com.syncfusion.javahelper.system.drawing.*;
-import com.syncfusion.javahelper.system.io.*;
-import com.syncfusion.javahelper.system.xml.*;;
 
 public class TableStyles {
 	public static void main(String[] args) throws Exception {
@@ -19,7 +21,7 @@ public class TableStyles {
 		// Executes Mail Merge with groups.
 		document.getMailMerge().executeGroup(mailMergeDataTable);
 		// Creates table and apply table styles.
-		WTable table = createAndApplyTableStyles(document);
+		createAndApplyTableStyles(document);
 		// Saves and closes the document.
 		document.save("Table Styles.docx", FormatType.Docx);
 		System.out.println("Word document generated successfully.");
@@ -152,134 +154,25 @@ public class TableStyles {
 	 * @exception XmlException     Unexpected xml tag + reader.LocalName
 	 */
 	private static MailMergeDataTable getMailMergeDataTable() throws Exception {
-		// Gets list of suppliers details.
-		ListSupport<Suppliers> suppliers = new ListSupport<Suppliers>(Suppliers.class);
-		FileStreamSupport fs = new FileStreamSupport(getDataDir("Suppliers.xml"), FileMode.Open, FileAccess.Read);
-		// Reads the xml document.
-		XmlReaderSupport reader = XmlReaderSupport.create(fs);
-		if (reader == null)
-			throw new Exception("reader");
-		while (reader.getNodeType().getEnumValue() != XmlNodeType.Element.getEnumValue())
-			reader.read();
-		if (!(reader.getLocalName() == "SuppliersList"))
-			throw new Exception("Unexpected xml tag " +  reader.getLocalName());
-		reader.read();
-		while (reader.getNodeType().getEnumValue() == XmlNodeType.Whitespace.getEnumValue())
-			reader.read();
-		// Iterates to add the suppliers details in list.
-		while (!(reader.getLocalName() == "SuppliersList")) {
-			if (reader.getNodeType().getEnumValue() == XmlNodeType.Element.getEnumValue()) {
-				switch ((reader.getLocalName()) == null ? "string_null_value" : (reader.getLocalName())) {
-				case "Suppliers":
-
-					suppliers.add(getSupplier(reader));
-					break;
-				}
-			} else
-
-			{
-				reader.read();
-				if ((reader.getLocalName() == "SuppliersList")
-						&& reader.getNodeType().getEnumValue() == XmlNodeType.EndElement.getEnumValue())
-					break;
-			}
-		}
-		//Creates an instance of “MailMergeDataTable” by specifying mail merge group name and “IEnumerable” collection.
-		MailMergeDataTable dataTable = new MailMergeDataTable("Suppliers", suppliers);
-		reader.close();
-		fs.close();
+		// Loads the XML file.
+		File file = new File(getDataDir("Suppliers.xml"));
+		// Create a new instance for the JAXBContext.
+		JAXBContext jaxbContext = JAXBContext.newInstance(SuppliersList.class);
+		// Reads the XML file.
+		Unmarshaller jaxbUnmarshaller = jaxbContext.createUnmarshaller();
+		SuppliersList suppliers = (SuppliersList) jaxbUnmarshaller.unmarshal(file);
+		// Gets the list of suppliers details.
+		List<Suppliers> list = suppliers.getSuppliers();
+		ListSupport<Suppliers> suppliersList = new ListSupport<Suppliers>(Suppliers.class);
+		suppliersList.addRange(list);
+		// Creates an instance of MailMergeDataTable by specifying mail merge group name and IEnumerable collection.
+		MailMergeDataTable dataTable = new MailMergeDataTable("Suppliers", suppliersList);
 		return dataTable;
 	}
 
 	/**
-	 * 
-	 * Gets the suppliers.
-	 * 
-	 * @param reader The reader.
-	 * @return
-	 * @exception System.Exception reader
-	 * @exception XmlException     Unexpected xml tag + reader.LocalName
-	 */
-	private static Suppliers getSupplier(XmlReaderSupport reader) throws Exception {
-		if (reader == null)
-			throw new Exception("reader");
-		while (reader.getNodeType().getEnumValue() != XmlNodeType.Element.getEnumValue())
-			reader.read();
-		if (!(reader.getLocalName() == "Suppliers"))
-			throw new Exception("Unexpected xml tag " + reader.getLocalName());
-		reader.read();
-		while (reader.getNodeType().getEnumValue() == XmlNodeType.Whitespace.getEnumValue())
-			reader.read();
-		Suppliers supplier = new Suppliers();
-		while (!(reader.getLocalName() == "Suppliers")) {
-			if (reader.getNodeType().getEnumValue() == XmlNodeType.Element.getEnumValue()) {
-				switch ((reader.getLocalName()) == null ? "string_null_value" : (reader.getLocalName())) {
-				case "SupplierID":
-
-					supplier.setSupplierID(reader.readContentAsString());
-					break;
-				case "CompanyName":
-
-					supplier.setCompanyName(reader.readContentAsString());
-					break;
-				case "ContactName":
-
-					supplier.setContactName(reader.readContentAsString());
-					break;
-				case "ContactTitle":
-
-					supplier.setContactTitle(reader.readContentAsString());
-					break;
-				case "Region":
-
-					supplier.setRegion(reader.readContentAsString());
-					break;
-				case "PostalCode":
-
-					supplier.setPostalCode(reader.readContentAsString());
-					break;
-				case "Phone":
-
-					supplier.setPhone(reader.readContentAsString());
-					break;
-				case "Fax":
-
-					supplier.setFax(reader.readContentAsString());
-					break;
-				case "HomePage":
-
-					supplier.setHomePage(reader.readContentAsString());
-					break;
-				case "Address":
-
-					supplier.setAddress(reader.readContentAsString());
-					break;
-				case "City":
-
-					supplier.setCity(reader.readContentAsString());
-					break;
-				case "Country":
-
-					supplier.setCountry(reader.readContentAsString());
-					break;
-				default:
-
-					reader.skip();
-					break;
-				}
-			} else
-
-			{
-				reader.read();
-				if ((reader.getLocalName() == "Suppliers")
-						&& reader.getNodeType().getEnumValue() == XmlNodeType.EndElement.getEnumValue())
-					break;
-			}
-		}
-		return supplier;
-	}
-	/**
 	 * Apply border properties to table.
+	 * 
 	 * @param borderStyles
 	 * @param styles
 	 * @param lineWidth

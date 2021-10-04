@@ -2,12 +2,13 @@ package salesinvoice;
 
 import java.io.File;
 import java.util.*;
+
+import javax.xml.bind.*;
+
 import com.syncfusion.docio.*;
 import com.syncfusion.javahelper.system.*;
 import com.syncfusion.javahelper.system.collections.generic.ListSupport;
 import com.syncfusion.javahelper.system.drawing.*;
-import com.syncfusion.javahelper.system.io.*;
-import com.syncfusion.javahelper.system.xml.*;
 
 public class SalesInvoice {
 	public static void main(String[] args) throws Exception {
@@ -71,44 +72,23 @@ public class SalesInvoice {
 	 * 
 	 */
 	private static MailMergeDataTable getTestOrder(int TestOrderId) throws Exception {
-		// Gets the test order as “IEnumerable” collection.
-		ListSupport<TestOrder> orders = new ListSupport<TestOrder>(TestOrder.class);
-		FileStreamSupport fs = new FileStreamSupport(getDataDir("TestOrder.xml"), FileMode.Open, FileAccess.Read);
-		XmlReaderSupport reader = XmlReaderSupport.create(fs);
-		if (reader == null)
-			throw new Exception("reader");
-		while (reader.getNodeType().getEnumValue() != XmlNodeType.Element.getEnumValue())
-			reader.read();
-		if (!(reader.getLocalName().equals("TestOrders")))
-			throw new Exception("Unexpected xml tag " + reader.getLocalName());
-		reader.read();
-		while (reader.getNodeType().getEnumValue() == XmlNodeType.Whitespace.getEnumValue())
-			reader.read();
-		while (!(reader.getLocalName().equals("TestOrders"))) {
-			if (reader.getNodeType().getEnumValue() == XmlNodeType.Element.getEnumValue()) {
-				switch ((reader.getLocalName()) == null ? "string_null_value" : (reader.getLocalName())) {
-				case "TestOrder":
-                    // Gets the test order.
-					TestOrder testOrder = getTestOrder(reader);
-					if (testOrder.getOrderID().equals(Int32Support.toString(TestOrderId))) {
-						orders.add(testOrder);
-						break;
-					}
-					break;
-				}
-			} else
-
-			{
-				reader.read();
-				if ((reader.getLocalName().equals("TestOrders"))
-						&& reader.getNodeType().getEnumValue() == XmlNodeType.EndElement.getEnumValue())
-					break;
+		// Loads the XML file.
+		File file = new File(getDataDir("TestOrder.xml"));
+		// Create a new instance for the JAXBContext.
+		JAXBContext jaxbContext = JAXBContext.newInstance(TestOrders.class);
+		// Reads the XML file.
+		Unmarshaller jaxbUnmarshaller = jaxbContext.createUnmarshaller();
+		TestOrders testOrders = (TestOrders) jaxbUnmarshaller.unmarshal(file);
+		// Gets the list of test order details.
+		List<TestOrder> list = testOrders.getTestOrder();
+		ListSupport<TestOrder> testOrderList = new ListSupport<TestOrder>(TestOrder.class);
+		for (TestOrder testOrder : list) {
+			if (testOrder.getOrderID().equals(Int32Support.toString(TestOrderId))) {				
+				testOrderList.add(testOrder);
 			}
 		}
-		// Creates an instance of “MailMergeDataTable” by specifying mail merge group name and “IEnumerable” collection.
-		MailMergeDataTable dataTable = new MailMergeDataTable("Orders", orders);
-		reader.close();
-		fs.close();
+		// Creates an instance of MailMergeDataTable by specifying mail merge group name and IEnumerable collection.
+		MailMergeDataTable dataTable = new MailMergeDataTable("Orders", testOrderList);
 		return dataTable;
 	}
 
@@ -119,45 +99,23 @@ public class SalesInvoice {
 	 * 
 	 */
 	private static MailMergeDataTable getTestOrderDetails(int TestOrderId) throws Exception {
-		// Gets the test order details as “IEnumerable” collection.
-		ListSupport<TestOrderDetail> orders = new ListSupport<TestOrderDetail>(TestOrderDetail.class);
-		FileStreamSupport fs = new FileStreamSupport(getDataDir("TestOrderDetails.xml"), FileMode.Open,
-				FileAccess.Read);
-		XmlReaderSupport reader = XmlReaderSupport.create(fs);
-		if (reader == null)
-			throw new Exception("reader");
-		while (reader.getNodeType().getEnumValue() != XmlNodeType.Element.getEnumValue())
-			reader.read();
-		if (!(reader.getLocalName().equals("TestOrderDetails")))
-			throw new Exception("Unexpected xml tag " + reader.getLocalName());
-		reader.read();
-		while (reader.getNodeType().getEnumValue() == XmlNodeType.Whitespace.getEnumValue())
-			reader.read();
-		while (!(reader.getLocalName().equals("TestOrderDetails"))) {
-			if (reader.getNodeType().getEnumValue() == XmlNodeType.Element.getEnumValue()) {
-				switch ((reader.getLocalName()) == null ? "string_null_value" : (reader.getLocalName())) {
-				case "TestOrderDetail":
-					// Gets the test order details.
-					TestOrderDetail testOrder = getTestOrderDetail(reader);
-					if ((testOrder.getOrderID().equals(Int32Support.toString(TestOrderId)))) {
-						orders.add(testOrder);
-						break;
-					}
-					break;
-				}
-			} else
-
-			{
-				reader.read();
-				if ((reader.getLocalName().equals("TestOrderDetails"))
-						&& reader.getNodeType().getEnumValue() == XmlNodeType.EndElement.getEnumValue())
-					break;
+		// Loads the XML file.
+		File file = new File(getDataDir("TestOrderDetails.xml"));
+		// Create a new instance for the JAXBContext.
+		JAXBContext jaxbContext = JAXBContext.newInstance(TestOrderDetails.class);
+		// Reads the XML file.
+		Unmarshaller jaxbUnmarshaller = jaxbContext.createUnmarshaller();
+		TestOrderDetails testOrders = (TestOrderDetails) jaxbUnmarshaller.unmarshal(file);
+		// Gets the list of test order details.
+		List<TestOrderDetail> list = testOrders.getTestOrderDetails();
+		ListSupport<TestOrderDetail> testOrderList = new ListSupport<TestOrderDetail>(TestOrderDetail.class);
+		for (TestOrderDetail testOrder : list) {
+			if (testOrder.getOrderID().equals(Int32Support.toString(TestOrderId))) {
+				testOrderList.add(testOrder);
 			}
 		}
-		// Creates an instance of “MailMergeDataTable” by specifying mail merge group name and “IEnumerable” collection.
-		MailMergeDataTable dataTable = new MailMergeDataTable("Order", orders);
-		reader.close();
-		fs.close();
+		// Creates an instance of MailMergeDataTable by specifying mail merge group name and IEnumerable collection.
+		MailMergeDataTable dataTable = new MailMergeDataTable("Order", testOrderList);
 		return dataTable;
 	}
 
@@ -168,313 +126,26 @@ public class SalesInvoice {
 	 * 
 	 */
 	private static MailMergeDataTable getTestOrderTotals(int TestOrderId) throws Exception {
-		// Gets the test order total details as “IEnumerable” collection.
-		ListSupport<TestOrderTotal> orders = new ListSupport<TestOrderTotal>(TestOrderTotal.class);
-		FileStreamSupport fs = new FileStreamSupport(getDataDir("OrderTotals.xml"), FileMode.Open,
-				FileAccess.Read);
-		XmlReaderSupport reader = XmlReaderSupport.create(fs);
-		if (reader == null)
-			throw new Exception("reader");
-		while (reader.getNodeType().getEnumValue() != XmlNodeType.Element.getEnumValue())
-			reader.read();
-		if (!(reader.getLocalName().equals("TestOrderTotals")))
-			throw new Exception("Unexpected xml tag " + reader.getLocalName());
-		reader.read();
-		while (reader.getNodeType().getEnumValue() == XmlNodeType.Whitespace.getEnumValue())
-			reader.read();
-		while (!(reader.getLocalName().equals("TestOrderTotals"))) {
-			if (reader.getNodeType().getEnumValue() == XmlNodeType.Element.getEnumValue()) {
-				switch ((reader.getLocalName()) == null ? "string_null_value" : (reader.getLocalName())) {
-				case "TestOrderTotal":
-                    // Gets the test order total.
-					TestOrderTotal testOrder = getTestOrderTotal(reader);
-					if ((testOrder.getOrderID().equals(Int32Support.toString(TestOrderId)))) {
-						orders.add(testOrder);
-						break;
-					}
-					break;
-				}
-				reader.read();
-			} else
-
-			{
-				reader.read();
-				if ((reader.getLocalName().equals("TestOrderTotals"))
-						&& reader.getNodeType().getEnumValue() == XmlNodeType.EndElement.getEnumValue())
-					break;
+		// Loads the XML file.
+		File file = new File(getDataDir("OrderTotals.xml"));
+		// Create a new instance for the JAXBContext.
+		JAXBContext jaxbContext = JAXBContext.newInstance(TestOrderTotals.class);
+		// Reads the XML file.
+		Unmarshaller jaxbUnmarshaller = jaxbContext.createUnmarshaller();
+		TestOrderTotals testOrders = (TestOrderTotals) jaxbUnmarshaller.unmarshal(file);
+		// Gets the list of test order details.
+		List<TestOrderTotal> list = testOrders.getTestOrderTotals();
+		ListSupport<TestOrderTotal> testOrderList = new ListSupport<TestOrderTotal>(TestOrderTotal.class);
+		for (TestOrderTotal testOrder : list) {
+			if (testOrder.getOrderID().equals(Int32Support.toString(TestOrderId))) {
+				testOrderList.add(testOrder);
 			}
 		}
-		// Creates an instance of “MailMergeDataTable” by specifying mail merge group name and “IEnumerable” collection.
-		MailMergeDataTable dataTable = new MailMergeDataTable("OrderTotals", orders);
-		reader.close();
-		fs.close();
+		// Creates an instance of MailMergeDataTable by specifying mail merge group name and IEnumerable collection.
+		MailMergeDataTable dataTable = new MailMergeDataTable("OrderTotals", testOrderList);
 		return dataTable;
 	}
 
-	/**
-	 * 
-	 * Gets the test order.
-	 * 
-	 * @param reader The reader.
-	 */
-	private static TestOrder getTestOrder(XmlReaderSupport reader) throws Exception {
-		if (reader == null)
-			throw new Exception("reader");
-		while (reader.getNodeType().getEnumValue() != XmlNodeType.Element.getEnumValue())
-			reader.read();
-		if (!(reader.getLocalName().equals("TestOrder")))
-			throw new Exception("Unexpected xml tag " + reader.getLocalName());
-		reader.read();
-		while (reader.getNodeType().getEnumValue() == XmlNodeType.Whitespace.getEnumValue())
-			reader.read();
-		TestOrder testOrder = new TestOrder();
-		while (!(reader.getLocalName().equals("TestOrder"))) {
-			if (reader.getNodeType().getEnumValue() == XmlNodeType.Element.getEnumValue()) {
-				switch ((reader.getLocalName()) == null ? "string_null_value" : (reader.getLocalName())) {
-				case "ShipName":
-
-					testOrder.setShipName(reader.readContentAsString());
-					break;
-				case "ShipAddress":
-
-					testOrder.setShipAddress(reader.readContentAsString());
-					break;
-				case "ShipCity":
-
-					testOrder.setShipCity(reader.readContentAsString());
-					break;
-				case "ShipPostalCode":
-
-					testOrder.setShipPostalCode(reader.readContentAsString());
-					break;
-				case "ShipCountry":
-
-					testOrder.setShipCountry(reader.readContentAsString());
-					break;
-				case "PostalCode":
-
-					testOrder.setPostalCode(reader.readContentAsString());
-					break;
-				case "CustomerID":
-
-					testOrder.setCustomerID(reader.readContentAsString());
-					break;
-				case "Customers.CompanyName":
-
-					testOrder.setCustomers_CompanyName(reader.readContentAsString());
-					break;
-				case "HomePage":
-
-					testOrder.setSalesperson(reader.readContentAsString());
-					break;
-				case "Address":
-
-					testOrder.setAddress(reader.readContentAsString());
-					break;
-				case "City":
-
-					testOrder.setCity(reader.readContentAsString());
-					break;
-				case "Country":
-
-					testOrder.setCountry(reader.readContentAsString());
-					break;
-				case "OrderID":
-
-					testOrder.setOrderID(reader.readContentAsString());
-					break;
-				case "OrderDate":
-
-					testOrder.setOrderDate(reader.readContentAsString());
-					break;
-				case "RequiredDate":
-
-					testOrder.setRequiredDate(reader.readContentAsString());
-					break;
-				case "ShippedDate":
-
-					testOrder.setShippedDate(reader.readContentAsString());
-					break;
-				case "Shippers.CompanyName":
-
-					testOrder.setShippers_CompanyName(reader.readContentAsString());
-					break;
-				default:
-
-					reader.skip();
-					break;
-				}
-			} else
-
-			{
-				reader.read();
-				if ((reader.getLocalName().equals("TestOrders"))
-						&& reader.getNodeType().getEnumValue() == XmlNodeType.EndElement.getEnumValue())
-					break;
-			}
-		}
-		return testOrder;
-	}
-
-	/**
-	 * Gets TestOrder ID
-	 *
-	 */
-	@SuppressWarnings("unchecked")
-	private ArrayList getTestOrderID() throws Exception {
-		FileStreamSupport fs = new FileStreamSupport(getDataDir("TestOrder.xml"), FileMode.Open, FileAccess.Read);
-		XmlReaderSupport reader = XmlReaderSupport.create(fs);
-		if (reader == null)
-			throw new Exception("reader");
-		while (reader.getNodeType().getEnumValue() != XmlNodeType.Element.getEnumValue())
-			reader.read();
-		if (!(reader.getLocalName().equals("TestOrders")))
-			throw new Exception("Unexpected xml tag " + reader.getLocalName());
-		reader.read();
-		while (reader.getNodeType().getEnumValue() == XmlNodeType.Whitespace.getEnumValue())
-			reader.read();
-		ArrayList orderId = new ArrayList();
-		while (!(reader.getLocalName().equals("TestOrders"))) {
-			if (reader.getNodeType().getEnumValue() == XmlNodeType.Element.getEnumValue()) {
-				switch ((reader.getLocalName()) == null ? "string_null_value" : (reader.getLocalName())) {
-				case "OrderID":
-
-					orderId.add(reader.readContentAsString());
-					break;
-				default:
-
-					break;
-				}
-				reader.read();
-			} else
-
-			{
-				reader.read();
-				if ((reader.getLocalName().equals("TestOrders"))
-						&& reader.getNodeType().getEnumValue() == XmlNodeType.EndElement.getEnumValue())
-					break;
-			}
-		}
-		return orderId;
-	}
-
-	/**
-	 * 
-	 * Gets the test order details.
-	 * 
-	 * @param reader The reader.
-	 */
-	private static TestOrderDetail getTestOrderDetail(XmlReaderSupport reader) throws Exception {
-		if (reader == null)
-			throw new Exception("reader");
-		while (reader.getNodeType().getEnumValue() != XmlNodeType.Element.getEnumValue())
-			reader.read();
-		if (!(reader.getLocalName().equals("TestOrderDetail")))
-			throw new Exception("Unexpected xml tag " + reader.getLocalName());
-		reader.read();
-		while (reader.getNodeType().getEnumValue() == XmlNodeType.Whitespace.getEnumValue())
-			reader.read();
-		TestOrderDetail testOrderDetail = new TestOrderDetail();
-		while (!(reader.getLocalName().equals("TestOrderDetail"))) {
-			if (reader.getNodeType().getEnumValue() == XmlNodeType.Element.getEnumValue()) {
-				switch ((reader.getLocalName()) == null ? "string_null_value" : (reader.getLocalName())) {
-				case "OrderID":
-
-					testOrderDetail.setOrderID(reader.readContentAsString());
-					break;
-				case "ProductID":
-
-					testOrderDetail.setProductID(reader.readContentAsString());
-					break;
-				case "ProductName":
-
-					testOrderDetail.setProductName(reader.readContentAsString());
-					break;
-				case "UnitPrice":
-
-					testOrderDetail.setUnitPrice(reader.readContentAsString());
-					break;
-				case "Quantity":
-
-					testOrderDetail.setQuantity(reader.readContentAsString());
-					break;
-				case "Discount":
-
-					testOrderDetail.setDiscount(reader.readContentAsString());
-					break;
-				case "ExtendedPrice":
-
-					testOrderDetail.setExtendedPrice(reader.readContentAsString());
-					break;
-				default:
-
-					reader.skip();
-					break;
-				}
-			} else
-
-			{
-				reader.read();
-				if ((reader.getLocalName().equals("TestOrderDetail"))
-						&& reader.getNodeType().getEnumValue() == XmlNodeType.EndElement.getEnumValue())
-					break;
-			}
-		}
-		return testOrderDetail;
-	}
-
-	/**
-	 * 
-	 * Gets the test order total.
-	 * 
-	 * @param reader The reader.
-	 */
-	private static TestOrderTotal getTestOrderTotal(XmlReaderSupport reader) throws Exception {
-		if (reader == null)
-			throw new Exception("reader");
-		while (reader.getNodeType().getEnumValue() != XmlNodeType.Element.getEnumValue())
-			reader.read();
-		if (!(reader.getLocalName().equals("TestOrderTotal")))
-			throw new Exception("Unexpected xml tag " + reader.getLocalName());
-		reader.read();
-		while (reader.getNodeType().getEnumValue() == XmlNodeType.Whitespace.getEnumValue())
-			reader.read();
-		TestOrderTotal testOrderTotal = new TestOrderTotal();
-		while (!(reader.getLocalName().equals("TestOrderTotal"))) {
-			if (reader.getNodeType().getEnumValue() == XmlNodeType.Element.getEnumValue()) {
-				switch ((reader.getLocalName()) == null ? "string_null_value" : (reader.getLocalName())) {
-				case "OrderID":
-
-					testOrderTotal.setOrderID(reader.readContentAsString());
-					break;
-				case "Subtotal":
-
-					testOrderTotal.setSubtotal(reader.readContentAsString());
-					break;
-				case "Freight":
-
-					testOrderTotal.setFreight(reader.readContentAsString());
-					break;
-				case "Total":
-
-					testOrderTotal.setTotal(reader.readContentAsString());
-					break;
-				default:
-
-					reader.skip();
-					break;
-				}
-			} else
-
-			{
-				reader.read();
-				if ((reader.getLocalName().equals("TestOrderTotal"))
-						&& reader.getNodeType().getEnumValue() == XmlNodeType.EndElement.getEnumValue())
-					break;
-			}
-		}
-		return testOrderTotal;
-	}
 	/**
 	 * Get the file path
 	 * 
