@@ -7,16 +7,16 @@ import com.syncfusion.docio.*;
 public class Compare {
 	public static void main(String[] args) throws Exception {
 		//Load the original document.
-        WordDocument originalDocument = new WordDocument(getDataDir("OriginalDocument.docx"), FormatType.Docx);
-        //Load the revised document.
-        WordDocument revisedDocument = new WordDocument(getDataDir("RevisedDocument.docx"), FormatType.Docx);
-        //Compare the original document with the revised document.
-        originalDocument.compare(revisedDocument, "Nancy Davolio", LocalDateTime.now().minusDays(1));
-        //Save the word document.
-        originalDocument.save("Sample.docx");
-        //Close the word documents.
-        originalDocument.close();
-        revisedDocument.close();
+		WordDocument originalDocument = new WordDocument(getDataDir("OriginalDocument.docx"), FormatType.Docx);
+		//Load the revised document.
+		WordDocument revisedDocument = new WordDocument(getDataDir("RevisedDocument.docx"), FormatType.Docx);
+		//Compare the original document with the revised document.
+		originalDocument.compare(revisedDocument, "Nancy Davolio", LocalDateTime.now().minusDays(1));
+		//Save the word document.
+		originalDocument.save("Sample.docx");
+		//Close the word documents.
+		originalDocument.close();
+		revisedDocument.close();
 		System.out.println("Word document generated successfully.");
 	}
 
