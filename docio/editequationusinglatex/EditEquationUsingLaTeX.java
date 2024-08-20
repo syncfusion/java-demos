@@ -17,7 +17,7 @@ public class EditEquationUsingLaTeX {
 		//Update the modified laTeX code to the equation.
 		math.getMathParagraph().setLaTeX("\\frac{d}{dx}\\left( {x}^{2}\\right)=k{x}^{k-1}");
 		//Save the word document.
-		document.save("Sample.docx");
+		document.save("EditEquationLaTeX.docx");
 		//Close the word document.
 		document.close();
 		System.out.println("Word document generated successfully.");

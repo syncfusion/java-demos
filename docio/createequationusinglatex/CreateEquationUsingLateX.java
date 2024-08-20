@@ -25,7 +25,7 @@ public class CreateEquationUsingLateX {
 		// Append equation to the paragraph.
 		paragraph.appendMath("f\\left(x\\right)={a}_{0}+\\sum_{n=1}^{\\infty}{\\left({a}_{n}\\cos{\\frac{n\\pi{x}}{L}}+{b}_{n}\\sin{\\frac{n\\pi{x}}{L}}\\right)}");
 		//Save the word document.
-		document.save("Sample.docx");
+		document.save("CreateEquationLaTeX.docx");
 		//Close the word document.
 		document.close();
 		System.out.println("Word document generated successfully.");
