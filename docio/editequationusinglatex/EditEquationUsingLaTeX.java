@@ -2,8 +2,7 @@ package editequationusinglatex;
 
 import java.io.File;
 import com.syncfusion.docio.*;
-import com.syncfusion.javahelper.system.ObjectSupport;
-import com.syncfusion.javahelper.system.StringSupport;
+import com.syncfusion.javahelper.system.*;
 import com.syncfusion.javahelper.system.collections.generic.ListSupport;
 
 public class EditEquationUsingLaTeX {
